@@ -1,9 +1,15 @@
+// Require is essentially the same as import
+// Imports
 const express = require('express')
 const bodyParser = require('body-parser')
+const database = require('./queries')
+
+// Express is a node.js web server framework to make it easier to make API requests
 const app = express()
 const port = 3001
-const db = require('./queries')
 
+// App.use: for middleware
+// Giving data back into a body object
 app.use(bodyParser.json())
 app.use(
   bodyParser.urlencoded({
@@ -11,16 +17,21 @@ app.use(
   })
 )
 
-app.get('/', (request, response) => {
-  response.json({ info: 'Node.js, Express, and Postgres API' })
-})
+// To allow data sharing between different local hosts during development phase
+app.use((_, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
-app.get('/users', db.getUsers)
-app.get('/users/:id', db.getUserById)
-app.post('/users', db.createUser)
-app.put('/users/:id', db.updateUser)
-app.delete('/users/:id', db.deleteUser)
+app.get('/', database.displayHome)
+app.get('/users', database.getUsers)
+app.get('/users/:id', database.getUserById)
+app.post('/users', database.createUser)
+app.put('/users/:id', database.updateUser)
+app.delete('/users/:id', database.deleteUser)
 
+// Get the app to listen to start listening to any https requests on the port you specify
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
 })
