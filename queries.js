@@ -4,7 +4,7 @@ const Pool = require('pg').Pool
 
 const pool = new Pool({
   // details to connect to the database
-  user: 'me',
+  user: 'marieimpens',
   host: 'localhost',
   database: 'react_message_app',
   password: 'password',
@@ -15,7 +15,6 @@ const pool = new Pool({
 // GET: /users | getUsers()
 // GET: /users/:id | getUserById()
 // POST: /users | createUser()
-// PUT: /users/:id | updateUser()
 // DELETE: /users/:id | deleteUser()
 
 // request and response parameters are part of the Express API, if you don't use any of the 2 you can type '_'
@@ -51,9 +50,9 @@ const getUserById = (request, response) => {
 }
 
 const createUser = (request, response) => {
-  const { name, email } = request.body
+  const { username, password } = request.body
 
-  pool.query('INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *', [name, email], (error, results) => {
+  pool.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', [username, password], (error, results) => {
     if (error) {
       console.log(error);
       response.status(500).json({ error: 'Error creating user' })
@@ -61,24 +60,6 @@ const createUser = (request, response) => {
       response.status(201).json(results.rows[0].id)
     }
   })
-}
-
-const updateUser = (request, response) => {
-  const id = parseInt(request.params.id)
-  const { name, email } = request.body
-
-  pool.query(
-    'UPDATE users SET name = $1, email = $2 WHERE id = $3',
-    [name, email, id],
-    (error) => {
-      if (error) {
-        console.log(error);
-        response.status(500).json({ error: 'Error modifying user' })
-      } else {
-        response.status(200).json(id)
-      }
-    }
-  )
 }
 
 const deleteUser = (request, response) => {
@@ -89,7 +70,7 @@ const deleteUser = (request, response) => {
       console.log(error);
       response.status(500).json({ error: 'Error deleting user' })
     } else {
-      response.status(204)
+      response.status(204).json(id)
     }
   })
 }
@@ -99,6 +80,5 @@ module.exports = {
   getUsers,
   getUserById,
   createUser,
-  updateUser,
   deleteUser,
 }

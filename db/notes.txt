@@ -5,8 +5,6 @@ password
 
 Threads table:
 id
-participants - array of User ids
-messages - array of Message ids
 
 Messages table:
 id

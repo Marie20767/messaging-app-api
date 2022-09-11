@@ -31,7 +31,6 @@ app.get('/', database.displayHome)
 app.get('/users', database.getUsers)
 app.get('/users/:id', database.getUserById)
 app.post('/users', database.createUser)
-app.put('/users/:id', database.updateUser)
 app.delete('/users/:id', database.deleteUser)
 
 // Get the app to listen to start listening to any https requests on the port you specify
