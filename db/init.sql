@@ -9,22 +9,27 @@ CREATE TABLE users (
 
 CREATE TABLE message_threads (
   ID SERIAL PRIMARY KEY,
-  -- TODO: work in progress:
-  -- CONSTRAINT fk_article FOREIGN KEY(article_id) REFERENCES article(id)
-  -- CONSTRAINT fk_tag FOREIGN KEY(tag_id) REFERENCES tag(id)
-  -- participants VARCHAR(30),
-  -- messages VARCHAR(30)
+);
+
+CREATE TABLE message_thread_participants (
+  thread_id INT NOT NULL,
+  user_id INT NOT NULL,
+
+  PRIMARY KEY (thread_id, user_id)
+
+  CONSTRAINT fk_message_threads FOREIGN KEY(message_thread_id) REFERENCES message_threads(id)
+  CONSTRAINT fk_users FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
 CREATE TABLE messages (
   ID SERIAL PRIMARY KEY,
   text TEXT,
   timestamp TIMESTAMPTZ,
-  -- TODO: work in progress:
-  -- CONSTRAINT fk_message_threads FOREIGN KEY(message_thread_id) REFERENCES message_threads(id)
-);
+  sending_user_id INT NOT NULL,
 
--- TODO: put in fake users
+  CONSTRAINT fk_users FOREIGN KEY(sending_user_id) REFERENCES users(id)
+  CONSTRAINT fk_message_threads FOREIGN KEY(message_thread_id) REFERENCES message_threads(id)
+);
 
 INSERT INTO users (username, password)
   VALUES ('Jerry', '1234'), ('George', '1234');
