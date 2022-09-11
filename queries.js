@@ -6,7 +6,7 @@ const pool = new Pool({
   // details to connect to the database
   user: 'me',
   host: 'localhost',
-  database: 'api',
+  database: 'react_message_app',
   password: 'password',
   port: 5432,
 })
@@ -18,8 +18,7 @@ const pool = new Pool({
 // PUT: /users/:id | updateUser()
 // DELETE: /users/:id | deleteUser()
 
-// Request, response parameters are part of the Express API, if you don't use one you can type '_'
-
+// request and response parameters are part of the Express API, if you don't use any of the 2 you can type '_'
 const displayHome = (_, response) => {
     response.json({ info: 'Messaging API' })
 }
@@ -42,7 +41,7 @@ const getUserById = (request, response) => {
   pool.query('SELECT * FROM users WHERE id = $1', [id], (error, results) => {
     if (error) {
       console.log(error);
-      response.status(500).send('Error')
+      response.status(500).json({ error: 'Error finding user' })
     } else {
       // Gives back the results of the query in an array, always use results.rows
       response.status(200).json(results.rows)
@@ -57,9 +56,9 @@ const createUser = (request, response) => {
   pool.query('INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *', [name, email], (error, results) => {
     if (error) {
       console.log(error);
-      response.status(500).send('Error')
+      response.status(500).json({ error: 'Error creating user' })
     } else {
-      response.status(201).send(`User added with ID: ${results.rows[0].id}`)
+      response.status(201).json(results.rows[0].id)
     }
   })
 }
@@ -71,12 +70,12 @@ const updateUser = (request, response) => {
   pool.query(
     'UPDATE users SET name = $1, email = $2 WHERE id = $3',
     [name, email, id],
-    (error, results) => {
+    (error) => {
       if (error) {
         console.log(error);
-        response.status(500).send('Error')
+        response.status(500).json({ error: 'Error modifying user' })
       } else {
-        response.status(200).send(`User modified with ID: ${id}`)
+        response.status(200).json(id)
       }
     }
   )
@@ -88,9 +87,9 @@ const deleteUser = (request, response) => {
   pool.query('DELETE FROM users WHERE id = $1', [id], (error) => {
     if (error) {
       console.log(error);
-      response.status(500).send('Error')
+      response.status(500).json({ error: 'Error deleting user' })
     } else {
-      response.status(200).send(`User deleted with ID: ${id}`)
+      response.status(204)
     }
   })
 }

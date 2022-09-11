@@ -4,6 +4,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const database = require('./queries')
 
+// TODO: add password encryption
+
 // Express is a node.js web server framework to make it easier to make API requests
 const app = express()
 const port = 3001
@@ -20,6 +22,7 @@ app.use(
 // To allow data sharing between different local hosts during development phase
 app.use((_, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });

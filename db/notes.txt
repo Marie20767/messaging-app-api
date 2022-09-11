@@ -1,0 +1,27 @@
+Users table:
+id
+username
+password
+
+Threads table:
+id
+participants - array of User ids
+messages - array of Message ids
+
+Messages table:
+id
+message/text
+timestamp
+
+
+
+User can have many MessageThreads
+MessageThread can have many Users
+
+Users to MessageThreads is 'Many to Many'
+
+
+Message can have one MessageThread
+MessageThread can have many Messages
+
+Message to MessageThreads is 'One to Many'
