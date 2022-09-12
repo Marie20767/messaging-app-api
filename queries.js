@@ -50,9 +50,9 @@ const getUserById = (request, response) => {
 }
 
 const createUser = (request, response) => {
-  const { username, password } = request.body
+  const { name, password, avatar_id } = request.body
 
-  pool.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', [username, password], (error, results) => {
+  pool.query('INSERT INTO users (name, password, avatar_id) VALUES ($1, $2, $3) RETURNING *', [name, password, avatar_id], (error, results) => {
     if (error) {
       console.log(error);
       response.status(500).json({ error: 'Error creating user' })

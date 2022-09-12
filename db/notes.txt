@@ -1,6 +1,6 @@
 Users table:
 id
-username
+name
 password
 
 Threads table:
