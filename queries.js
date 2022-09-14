@@ -15,6 +15,7 @@ const pool = new Pool({
 // GET: /users | getUsers()
 // GET: /users/:id | getUserById()
 // POST: /users | createUser()
+// POST: /login |loginUser()
 // DELETE: /users/:id | deleteUser()
 
 // request and response parameters are part of the Express API, if you don't use any of the 2 you can type '_'
@@ -26,7 +27,7 @@ const getUsers = (_, response) => {
   pool.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
     if (error) {
       console.log(error);
-      response.status(500).send('Error')
+      response.status(500).json({ error: 'Error getting users' })
     } else {
       response.status(200).json(results.rows)
     }
@@ -62,6 +63,25 @@ const createUser = (request, response) => {
   })
 }
 
+// TODO: don't send back password
+
+const loginUser = (request, response) => {
+  const { name, password } = request.body
+
+  pool.query('SELECT * FROM users WHERE name = $1 AND password = $2', [name, password], (error, results) => {
+    if (error) {
+      console.log(error);
+      response.status(401).json({ error: 'Wrong user name and/or password' })
+    } else {
+      if (results.rows.length !== 0) {
+        response.status(200).json(results.rows[0])
+      } else {
+        response.status(401).json({ error: 'Wrong user name and/or password' })
+      }
+    }
+  })
+}
+
 const deleteUser = (request, response) => {
   const id = parseInt(request.params.id)
 
@@ -80,5 +100,6 @@ module.exports = {
   getUsers,
   getUserById,
   createUser,
+  loginUser,
   deleteUser,
 }

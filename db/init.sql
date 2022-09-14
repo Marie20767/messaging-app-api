@@ -1,6 +1,7 @@
 DROP TABLE users;
 
 -- TODO: change the VARCHAR
+-- Fix code for the message threads etc
 
 CREATE TABLE users (
   ID SERIAL PRIMARY KEY,
