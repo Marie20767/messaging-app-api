@@ -11,7 +11,6 @@ const pool = new Pool({
   port: 5432,
 })
 
-// GET: / | displayHome()
 // GET: /users | getUsers()
 // GET: /users/:id | getUserById()
 // POST: /users | createUser()
@@ -19,9 +18,6 @@ const pool = new Pool({
 // DELETE: /users/:id | deleteUser()
 
 // request and response parameters are part of the Express API, if you don't use any of the 2 you can type '_'
-const displayHome = (_, response) => {
-    response.json({ info: 'Messaging API' })
-}
 
 const getUsers = (_, response) => {
   pool.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
@@ -44,7 +40,7 @@ const getUserById = (request, response) => {
       response.status(500).json({ error: 'Error finding user' })
     } else {
       // Gives back the results of the query in an array, always use results.rows
-      response.status(200).json(results.rows)
+      response.status(200).json(results.rows[0])
     }
 
   })
@@ -96,7 +92,6 @@ const deleteUser = (request, response) => {
 }
 
 module.exports = {
-  displayHome,
   getUsers,
   getUserById,
   createUser,

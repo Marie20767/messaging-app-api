@@ -27,7 +27,6 @@ app.use((_, res, next) => {
   next();
 });
 
-app.get('/', database.displayHome)
 app.get('/users', database.getUsers)
 app.get('/users/:id', database.getUserById)
 app.post('/users', database.createUser)
