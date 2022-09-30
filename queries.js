@@ -11,7 +11,7 @@ const {
 } = demoThreads;
 
 const pool = new Pool({
-  // details to connect to the database
+  // details to connect to the databasen
   user: 'marieimpens',
   host: 'localhost',
   database: 'react_message_app',
