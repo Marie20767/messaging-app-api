@@ -48,12 +48,12 @@ CREATE TABLE messages (
 INSERT INTO users (id, name, password, avatar_id)
 VALUES
   (1, 'Hermione', '1234', 'weasel-id'),
-  (2, 'Rubeus', '1234', 'seal-id'),
-  (3, 'Albus', '1234', 'deer2-id'),
+  (2, 'Neville', '1234', 'meerkat-id'),
+  (3, 'Ron', '1234', 'snake-id'),
   (4, 'Ginny', '1234', 'koala-id'),
   (5, 'Sirius', '1234', 'rabbit2-id'),
-  (6, 'Neville', '1234', 'meerkat-id'),
+  (6, 'Rubeus', '1234', 'seal-id'),
   (7, 'Harry', '1234', 'fox2-id'),
   (8, 'Luna', '1234', 'deer-id'),
-  (9, 'Ron', '1234', 'snake-id'),
+  (9, 'Albus', '1234', 'deer2-id'),
   (10, 'Minerva', '1234', 'chicken-id');
