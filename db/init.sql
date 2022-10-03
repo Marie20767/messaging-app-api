@@ -38,6 +38,7 @@ CREATE TABLE messages (
   ID SERIAL PRIMARY KEY,
   thread_id INT NOT NULL,
   sending_user_id INT NOT NULL,
+  recipient_user_id INT NOT NULL,
   text TEXT,
   timestamp TIMESTAMPTZ,
 
