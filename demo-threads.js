@@ -157,7 +157,7 @@ const insertMessageThreadsMessages = `
     maybe go out with some other people, relax a bit around you because I never used to be able to talk if 
     you were in the room, remember? And she thought you might take a bit more notice if I was a bit more myself.', NOW() - interval '730 minutes'),
     (7, 7, $1, 'Smart girl that Hermione.', NOW() - interval '728 minutes'),
-    (7, 7, $1, 'I just wish I''d asked you sooner. We could havee had ages...months...years maybe...', NOW() - interval '723 minutes'),
+    (7, 7, $1, 'I just wish I''d asked you sooner. We could have had ages...months...years maybe...', NOW() - interval '723 minutes'),
     (7, $1, 7, 'But you''ve been too busy saving the wizarding world. Well ... I can''t say I''m surprised. I knew this would happen
     in the end. I knew you wouldn''t be happy unless you were hunting Voldemort. Maybe that''s why I like you so much.', NOW() - interval '721 minutes'),
     (7, 7, $1, 'Bye for now...', NOW() - interval '716 minutes'),

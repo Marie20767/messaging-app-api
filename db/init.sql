@@ -13,7 +13,7 @@ CREATE SEQUENCE user_id_seq
     CACHE 1;
 
 CREATE TABLE users (
-  ID bigint DEFAULT nextval('user_id_seq') PRIMARY KEY,
+  ID INT DEFAULT nextval('user_id_seq') PRIMARY KEY,
   name VARCHAR(30),
   password VARCHAR(30),
   avatar_id VARCHAR(30)
