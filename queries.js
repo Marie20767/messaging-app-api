@@ -1,10 +1,10 @@
 // Pool is a node-postgres module
 // To make sure you don't have to create a connection to the database for every function
 const Pool = require('pg').Pool
-const e = require('express');
 const demoThreads = require('./demo-threads');
 
 const {
+  insertDemoFriends,
   insertMessageThreadsId,
   insertMessageThreadsParticipants,
   insertMessageThreadsMessages,
@@ -32,12 +32,45 @@ const getUsers = (_, response) => {
   })
 }
 
+const getFriends = (request, response) => {
+  const id = parseInt(request.params.id)
+
+  pool.query('SELECT * FROM friends WHERE user_id_2 = $1', [id], (getFriendIdsError, results) => {
+    if (getFriendIdsError) {
+      console.log(getFriendIdsError)
+      response.status(500).json({ error: 'Error getting friendIds' })
+    } else {
+      const friendsRows = results.rows
+      const friendIdsArray = friendsRows.map((friendRow) => {
+        return friendRow.user_id_1
+      })
+
+      const queryParamatersArray = friendIdsArray.map((_, index) => {
+        const queryParameter = index + 1
+        return `$${queryParameter}`
+      })
+
+      const queryParametersString = queryParamatersArray.join(', ')
+
+      pool.query(`SELECT * FROM users WHERE id IN (${queryParametersString})`, friendIdsArray, (getFriendsFromUsersError, friendResult) => {
+        if(getFriendsFromUsersError) {
+          console.log(getFriendsFromUsersError)
+          response.status(500).json({ error: 'Error getting friends' })
+        } else {
+          console.log('>>> friendResult.rows: ', friendResult.rows);
+          response.status(200).json(friendResult.rows)
+        }
+      })
+    }
+  })
+}
+
 const getMessages = (request, response) => {
   const id = parseInt(request.params.id)
 
-  pool.query('SELECT * FROM message_thread_participants WHERE user_id = $1', [id], (error, results) => {
-    if (error) {
-      console.log(error);
+  pool.query('SELECT * FROM message_thread_participants WHERE user_id = $1', [id], (getMessageThreadParticipantsError, results) => {
+    if (getMessageThreadParticipantsError) {
+      console.log(getMessageThreadParticipantsError);
       response.status(500).json({ error: 'Error getting messages' })
     } else {
       const messageThreadParticipants = results.rows
@@ -52,9 +85,9 @@ const getMessages = (request, response) => {
 
       const queryParametersString = queryParamatersArray.join(', ')
 
-      pool.query(`SELECT * FROM messages WHERE thread_id IN (${queryParametersString})`, messageThreadIdsArray, (error, messagesResult) => {
-        if (error) {
-          console.log(error);
+      pool.query(`SELECT * FROM messages WHERE thread_id IN (${queryParametersString})`, messageThreadIdsArray, (getMessagesError, messagesResult) => {
+        if (getMessagesError) {
+          console.log(getMessagesError);
           response.status(500).json({ error: 'Error getting messages' })
         } else {
           response.status(200).json(messagesResult.rows)
@@ -84,36 +117,49 @@ const handleCreateUserError = (response, error) => {
   response.status(500).json({ error: 'Error creating user' })
 }
 
+const insertMessageThreadsOnRegisterUser = (response, registeredUserId) => {
+  pool.query(insertMessageThreadsId, [], (messageThreadsIdError) => {
+    if (messageThreadsIdError) {
+      handleCreateUserError(response, messageThreadsIdError);
+    } else {
+      pool.query(insertMessageThreadsParticipants, [registeredUserId], (messageThreadsParticipantsError) => {
+        if (messageThreadsParticipantsError) {
+          handleCreateUserError(response, messageThreadsParticipantsError)
+        } else {
+          pool.query(insertMessageThreadsMessages, [registeredUserId], (messageThreadsMessages) => {
+            if (messageThreadsMessages) {
+              handleCreateUserError(response, messageThreadsMessages)
+            } else {
+              response.status(201).json(registeredUserId)
+            }
+          })
+        }
+      })
+    }
+  })
+} 
+
 // TODO: see if we can use multiple requests at once or clean up all the if and else statements below
 // TODO: handle generating demo threads when there is already data in the database (so we can't re-use existing message_thread IDs)
 
 const createUser = (request, response) => {
   const { name, password, avatar_id } = request.body
 
-  pool.query('INSERT INTO users (name, password, avatar_id) VALUES ($1, $2, $3) RETURNING *', [name, password, avatar_id], (error, results) => {
-    if (error) {
-      handleCreateUserError(response, error);
+  pool.query('INSERT INTO users (name, password, avatar_id) VALUES ($1, $2, $3) RETURNING *', [name, password, avatar_id], (createUserError, results) => {
+    if (createUserError) {
+      handleCreateUserError(response, createUserError);
     } else {
-      // Once user has been created, insert some demo message threads for them
-      pool.query(insertMessageThreadsId, [], (error) => {
-        if (error) {
-          handleCreateUserError(response, error);
+      const registeredUserId = results.rows[0].id;
+
+      // When you register, add as friends all the demo users to the registered user
+      pool.query(insertDemoFriends, [registeredUserId], (insertDemoFriendsError) => {
+        if (insertDemoFriendsError) {
+          handleCreateUserError(response, insertDemoFriendsError)
         } else {
-          pool.query(insertMessageThreadsParticipants, [results.rows[0].id], (error) => {
-            if (error) {
-              handleCreateUserError(response, error)
-            } else {
-              pool.query(insertMessageThreadsMessages, [results.rows[0].id], (error) => {
-                if (error) {
-                  handleCreateUserError(response, error)
-                } else {
-                  response.status(201).json(results.rows[0].id)
-                }
-              })
-            }
-          })
+          // Once user has been created, insert some demo message threads for them
+          insertMessageThreadsOnRegisterUser(response, registeredUserId);
         }
-      })
+      })   
     }
   })
 }
@@ -166,6 +212,7 @@ const deleteUser = (request, response) => {
 
 module.exports = {
   getUsers,
+  getFriends,
   getMessages,
   getUserById,
   createUser,

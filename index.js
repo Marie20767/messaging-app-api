@@ -4,8 +4,6 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const database = require('./queries')
 
-// TODO: add password encryption
-
 // Express is a node.js web server framework to make it easier to make API requests
 const app = express()
 const port = 3001
@@ -29,6 +27,7 @@ app.use((_, res, next) => {
 
 app.get('/users', database.getUsers)
 app.get('/users/:id', database.getUserById)
+app.get('/friends/:id', database.getFriends)
 app.get('/messages/:id', database.getMessages)
 app.post('/users', database.createUser)
 app.post('/login', database.loginUser)

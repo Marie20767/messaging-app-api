@@ -1,5 +1,6 @@
 DROP SEQUENCE user_id_seq CASCADE;
 DROP TABLE users CASCADE;
+DROP TABLE friends CASCADE;
 DROP TABLE messages CASCADE;
 DROP TABLE message_threads CASCADE;
 DROP TABLE message_thread_participants CASCADE;
@@ -19,6 +20,15 @@ CREATE TABLE users (
   avatar_id VARCHAR(30)
 );
 
+CREATE TABLE friends (
+  ID SERIAL PRIMARY KEY,
+  user_id_1 INT NOT NULL,
+  user_id_2 INT NOT NULL,
+
+  CONSTRAINT fk_users FOREIGN KEY(user_id_1) REFERENCES users(id),
+                      FOREIGN KEY(user_id_2) REFERENCES users(id)
+);
+
 CREATE TABLE message_threads (
   ID SERIAL PRIMARY KEY
 );
@@ -35,9 +45,9 @@ CREATE TABLE message_thread_participants (
 );
 
 CREATE TABLE messages (
+  sending_user_id INT NOT NULL,
   ID SERIAL PRIMARY KEY,
   thread_id INT NOT NULL,
-  sending_user_id INT NOT NULL,
   recipient_user_id INT NOT NULL,
   text TEXT,
   timestamp TIMESTAMPTZ,
