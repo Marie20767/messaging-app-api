@@ -57,7 +57,6 @@ const getFriends = (request, response) => {
           console.log(getFriendsFromUsersError)
           response.status(500).json({ error: 'Error getting friends' })
         } else {
-          console.log('>>> friendResult.rows: ', friendResult.rows);
           response.status(200).json(friendResult.rows)
         }
       })
@@ -210,6 +209,24 @@ const deleteUser = (request, response) => {
   })
 }
 
+const addNewFriend = (request, response) => {
+  const {user_id, friend_id} = request.body  
+
+  pool.query('INSERT INTO friends (user_id_1, user_id_2) VALUES ($1, $2), ($2, $1) RETURNING *', [user_id, friend_id], (addFriendError, results) => {
+    if (addFriendError) {
+      console.log(addFriendError)
+      response.status(500).json({ error: 'Friend could not be added' })
+    } else {
+      if (results.rows.length !== 0) {
+        response.status(201).json(results.rows[0])
+      } else {
+        response.status(500).json({ error: 'Friend could not be added' })
+      }
+    }
+  })
+}
+
+
 module.exports = {
   getUsers,
   getFriends,
@@ -219,4 +236,5 @@ module.exports = {
   loginUser,
   updateUser,
   deleteUser,
+  addNewFriend,
 }

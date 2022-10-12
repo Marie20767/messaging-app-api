@@ -7,7 +7,7 @@ DROP TABLE message_thread_participants CASCADE;
 
 CREATE SEQUENCE user_id_seq
     AS integer
-    START WITH 11
+    START WITH 12
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -67,4 +67,5 @@ VALUES
   (7, 'Harry', '1234', 'fox2-id'),
   (8, 'Luna', '1234', 'deer-id'),
   (9, 'Albus', '1234', 'deer2-id'),
-  (10, 'Minerva', '1234', 'chicken-id');
+  (10, 'Minerva', '1234', 'chicken-id'),
+  (11, 'Draco', '1234', 'weasel-id');

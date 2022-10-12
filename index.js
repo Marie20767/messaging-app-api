@@ -31,6 +31,7 @@ app.get('/friends/:id', database.getFriends)
 app.get('/messages/:id', database.getMessages)
 app.post('/users', database.createUser)
 app.post('/login', database.loginUser)
+app.post('/add_friend', database.addNewFriend)
 app.put('/users/:id', database.updateUser)
 app.delete('/users/:id', database.deleteUser)
 
