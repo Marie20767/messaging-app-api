@@ -159,13 +159,13 @@ const insertMessageThreadsMessages = `
     (5, $1, 5, 'Thanks.', NOW() - interval '392 minutes'),
 
     (6, 6, $1, 'I am what I am, an'' I''m not ashamed.', NOW() - interval '10 hours'),
-    (6, 6, $1, 'Never be ashamed my ol'' dad used ter say, there''s some who''ll hold it against you but they''re not worth botherin'' with.', NOW() - interval '552 minutes'),
-    (6, 6, $1, 'An'' he was right. I''ve bin an idiot.', NOW() - interval '548 minutes'),
-    (6, 6, $1, 'I''m not botherin'' with her no more, I promise yeh that. ', NOW() - interval '543 minutes'),
-    (6, 6, $1, 'Big bones...I''ll give her big bones...', NOW() - interval '540 minutes'),
+    (6, 6, $1, 'Never be ashamed my ol'' dad used ter say, there''s some who''ll hold it against you but they''re not worth botherin'' with.', NOW() - interval '591 minutes'),
+    (6, 6, $1, 'An'' he was right. I''ve bin an idiot.', NOW() - interval '588 minutes'),
+    (6, 6, $1, 'I''m not botherin'' with her no more, I promise yeh that. ', NOW() - interval '587 minutes'),
+    (6, 6, $1, 'Big bones...I''ll give her big bones...', NOW() - interval '587 minutes'),
     (6, 6, $1, 'Yeh know wha? When I firs'' met you, you reminded me o'' me a bit. Mum an'' Dad gone an'' you was feelin'' like 
-    yeh wouldn'' fit in at Hogwarts, remember?', NOW() - interval '537 minutes'),
-    (6, 6, $1, 'Not sure yeh were really up to it...an'' now look at yeh!', NOW() - interval '537 minutes'),
+    yeh wouldn'' fit in at Hogwarts, remember?', NOW() - interval '555 minutes'),
+    (6, 6, $1, 'Not sure yeh were really up to it...an'' now look at yeh!', NOW() - interval '553 minutes'),
     (6, 6, $1, 'How you doin'' with that egg?', NOW() - interval '531 minutes'),
     (6, $1, 6, 'Great. Really great.', NOW() - interval '514 minutes'),
     (6, 6, $1, 'You show em''! Beat ''em all!', NOW() - interval '511 minutes'),
@@ -197,7 +197,7 @@ const insertMessageThreadsMessages = `
     (7, $1, 7, 'Bye...', NOW() - interval '714 minutes'),
 
     (8, $1, 8, 'Hello', NOW() - interval '20 hours'),
-    (8, $1, 8, 'How come you''re not at the feast?', NOW() - interval '1198 minutes'),
+    (8, $1, 8, 'How come you weren''t at the feast?', NOW() - interval '1198 minutes'),
     (8, 8, $1, 'Well, I''ve lost most of my possessions.', NOW() - interval '1190 minutes'),
     (8, 8, $1, 'People take them and hide them, you know. But as it''s the last night, I really do need them back, so I''ve been putting up signs.', NOW() - interval '1187 minutes'),
     (8, $1, 8, 'How come people hide your stuff?', NOW() - interval '1176 minutes'),
@@ -207,13 +207,13 @@ const insertMessageThreadsMessages = `
     (8, 8, $1, 'Oh no, They''ll come back, they always do in the end.', NOW() - interval '1155 minutes'),
 
     (9, 9, $1, 'So tell me.', NOW() - interval '1 day'),
-    (9, 9, $1, 'Your scar...has it been hurting at all?', NOW() - interval '23 hours'),
+    (9, 9, $1, 'Your scar...has it been hurting at all?', NOW() - interval '1432 minutes'),
     (9, $1, 9, 'No and I''ve been wondering about that.', NOW() - interval '1363 minutes'),
     (9, $1, 9, 'I thought it would be burning all the time now Voldemort''s getting so powerful again.', NOW() - interval '1363 minutes'),
     (9, 9, $1, 'I on the other hand thought otherwise.', NOW() - interval '1360 minutes'),
     (9, 9, $1, 'Lord Voldemort has finally realized the dangerous access to his thoughts and feelings you have been enjoying.', NOW() - interval '1359 minutes'),
     (9, 9, $1, 'It appears that he is now employing Occlumency against you.', NOW() - interval '1358 minutes'),
-    (9, $1, 9, 'Well I''m not complaining.', NOW() - interval '1280'),
+    (9, $1, 9, 'Well I''m not complaining.', NOW() - interval '1301 minutes'),
 
     (10, 10, $1, 'You''re back! What??? How? That was foolish earlier!', NOW() - interval '2 days'),
     (10, $1, 10, 'But he spat at you!', NOW() - interval '2855 minutes'),
@@ -229,8 +229,8 @@ const insertMessageThreadsMessages = `
     (10, $1, 10, 'But we''ve got to get the students out while I''m searching the castle.', NOW() - interval '2831 minutes'),
     (10, $1, 10, 'It''s me Voldemort wants, but he won''t care about killing a few more or less, not now.', NOW() - interval '2831 minutes'),
     (10, $1, 10, 'Not now he knows I''m attacking Horcruxes...', NOW() - interval '2830 minutes'),
-    (10, 10, $1, 'We shall secure the school against He-Who-Must-Not-Be-Named while you search for this object.', NOW() - interval '2831 minutes'),
-    (10, 10, $1, 'Come. We must alert the other Heads of House. You''d better bring your Cloak.', NOW() - interval '2830 minutes');
+    (10, 10, $1, 'We shall secure the school against He-Who-Must-Not-Be-Named while you search for this object.', NOW() - interval '2829 minutes'),
+    (10, 10, $1, 'Come. We must alert the other Heads of House. You''d better bring your Cloak.', NOW() - interval '2829 minutes');
 `;
 
 module.exports = {
