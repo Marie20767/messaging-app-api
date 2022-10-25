@@ -1,4 +1,5 @@
 DROP SEQUENCE user_id_seq CASCADE;
+DROP SEQUENCE message_threads_id_seq CASCADE;
 DROP TABLE users CASCADE;
 DROP TABLE friends CASCADE;
 DROP TABLE messages CASCADE;
@@ -29,8 +30,16 @@ CREATE TABLE friends (
                       FOREIGN KEY(user_id_2) REFERENCES users(id)
 );
 
+CREATE SEQUENCE message_threads_id_seq
+    AS integer
+    START WITH 11
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
 CREATE TABLE message_threads (
-  ID SERIAL PRIMARY KEY
+  ID INT DEFAULT nextval('message_threads_id_seq') PRIMARY KEY
 );
 
 CREATE TABLE message_thread_participants (

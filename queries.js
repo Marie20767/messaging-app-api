@@ -199,17 +199,52 @@ const deleteUser = (request, response) => {
   });
 };
 
+const handleAddNewFriendError = (response, error) => {
+  console.log(error);
+  response.status(500).json({ error: 'Error adding new friend' });
+};
+
 const addNewFriend = (request, response) => {
   const { user_id, friend_id } = request.body;
 
   pool.query('INSERT INTO friends (user_id_1, user_id_2) VALUES ($1, $2), ($2, $1) RETURNING *', [user_id, friend_id], (addFriendError, results) => {
     if (addFriendError) {
-      console.log(addFriendError);
-      response.status(500).json({ error: 'Friend could not be added' });
-    } else if (results.rows.length !== 0) {
-      response.status(201).json(results.rows[0]);
+      handleAddNewFriendError(response, addFriendError);
     } else {
-      response.status(500).json({ error: 'Friend could not be added' });
+      pool.query('INSERT INTO message_threads DEFAULT VALUES RETURNING *', [], (addMessageThreadIdsError, messageThreadResults) => {
+        if (addMessageThreadIdsError) {
+          handleAddNewFriendError(response, addMessageThreadIdsError);
+        } else {
+          const thread_id = messageThreadResults.rows[0].id;
+
+          pool.query(
+            'INSERT INTO message_thread_participants (thread_id, user_id) VALUES ($1, $2), ($1, $3) RETURNING *',
+            [thread_id, user_id, friend_id],
+            (addMessageThreadParticipantsError, threadParticipantResults) => {
+              console.log('>>> threadParticipantResults: ', threadParticipantResults);
+              if (addMessageThreadParticipantsError) {
+                handleAddNewFriendError(response, addMessageThreadParticipantsError);
+              } else {
+                // Insert an empty message into the new thread so that when the client requests all messages they get at least one message for each thread
+                pool.query(
+                  'INSERT INTO messages (thread_id, sending_user_id, recipient_user_id, text, timestamp) VALUES ($1, $2, $3, $4, NOW())',
+                  [thread_id, user_id, friend_id, ''],
+                  (addEmptyMessageError) => {
+                    if (addEmptyMessageError) {
+                      handleAddNewFriendError(response, addEmptyMessageError);
+                    } else {
+                      response.status(201).json({
+                        thread_id,
+                        friend_id: results.rows[0].user_id_2,
+                      });
+                    }
+                  },
+                );
+              }
+            },
+          );
+        }
+      });
     }
   });
 };
