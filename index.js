@@ -44,10 +44,12 @@ const addNewMessage = (data) => {
 // Socket.io for instant message sharing
 io.on('connection', (socket) => {
   socket.on('join_room', (data) => {
+    console.log('>>> join_room: ', `chat-${data.sending_user_id}-${data.recipient_user_id}`);
     socket.join(`chat-${data.sending_user_id}-${data.recipient_user_id}`);
   });
 
   socket.on('send_message', (data) => {
+    console.log('>>> send message to: ', `chat-${data.recipient_user_id}-${data.sending_user_id}`);
     socket.to(`chat-${data.recipient_user_id}-${data.sending_user_id}`).emit('receive_message', data);
 
     addNewMessage(data);

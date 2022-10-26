@@ -32,26 +32,31 @@ const getFriends = (request, response) => {
       response.status(500).json({ error: 'Error getting friendIds' });
     } else {
       const friendsRows = results.rows;
-      const friendIdsArray = friendsRows.map((friendRow) => {
-        return friendRow.user_id_1;
-      });
 
-      const queryParamatersArray = friendIdsArray.map((_, index) => {
-        const queryParameter = index + 1;
+      if (!friendsRows.length) {
+        response.status(200).json([]);
+      } else {
+        const friendIdsArray = friendsRows.map((friendRow) => {
+          return friendRow.user_id_1;
+        });
 
-        return `$${queryParameter}`;
-      });
+        const queryParamatersArray = friendIdsArray.map((_, index) => {
+          const queryParameter = index + 1;
 
-      const queryParametersString = queryParamatersArray.join(', ');
+          return `$${queryParameter}`;
+        });
 
-      pool.query(`SELECT * FROM users WHERE id IN (${queryParametersString})`, friendIdsArray, (getFriendsFromUsersError, friendResult) => {
-        if (getFriendsFromUsersError) {
-          console.log(getFriendsFromUsersError);
-          response.status(500).json({ error: 'Error getting friends' });
-        } else {
-          response.status(200).json(friendResult.rows);
-        }
-      });
+        const queryParametersString = queryParamatersArray.join(', ');
+
+        pool.query(`SELECT * FROM users WHERE id IN (${queryParametersString})`, friendIdsArray, (getFriendsFromUsersError, friendResult) => {
+          if (getFriendsFromUsersError) {
+            console.log(getFriendsFromUsersError);
+            response.status(500).json({ error: 'Error getting friends' });
+          } else {
+            response.status(200).json(friendResult.rows);
+          }
+        });
+      }
     }
   });
 };
@@ -65,26 +70,31 @@ const getMessages = (request, response) => {
       response.status(500).json({ error: 'Error getting messages' });
     } else {
       const messageThreadParticipants = results.rows;
-      const messageThreadIdsArray = messageThreadParticipants.map((participant) => {
-        return participant.thread_id;
-      });
 
-      const queryParamatersArray = messageThreadIdsArray.map((_, index) => {
-        const queryParameter = index + 1;
+      if (!messageThreadParticipants.length) {
+        response.status(200).json([]);
+      } else {
+        const messageThreadIdsArray = messageThreadParticipants.map((participant) => {
+          return participant.thread_id;
+        });
 
-        return `$${queryParameter}`;
-      });
+        const queryParamatersArray = messageThreadIdsArray.map((_, index) => {
+          const queryParameter = index + 1;
 
-      const queryParametersString = queryParamatersArray.join(', ');
+          return `$${queryParameter}`;
+        });
 
-      pool.query(`SELECT * FROM messages WHERE thread_id IN (${queryParametersString})`, messageThreadIdsArray, (getMessagesError, messagesResult) => {
-        if (getMessagesError) {
-          console.log(getMessagesError);
-          response.status(500).json({ error: 'Error getting messages' });
-        } else {
-          response.status(200).json(messagesResult.rows);
-        }
-      });
+        const queryParametersString = queryParamatersArray.join(', ');
+
+        pool.query(`SELECT * FROM messages WHERE thread_id IN (${queryParametersString})`, messageThreadIdsArray, (getMessagesError, messagesResult) => {
+          if (getMessagesError) {
+            console.log(getMessagesError);
+            response.status(500).json({ error: 'Error getting messages' });
+          } else {
+            response.status(200).json(messagesResult.rows);
+          }
+        });
+      }
     }
   });
 };
@@ -220,8 +230,7 @@ const addNewFriend = (request, response) => {
           pool.query(
             'INSERT INTO message_thread_participants (thread_id, user_id) VALUES ($1, $2), ($1, $3) RETURNING *',
             [thread_id, user_id, friend_id],
-            (addMessageThreadParticipantsError, threadParticipantResults) => {
-              console.log('>>> threadParticipantResults: ', threadParticipantResults);
+            (addMessageThreadParticipantsError) => {
               if (addMessageThreadParticipantsError) {
                 handleAddNewFriendError(response, addMessageThreadParticipantsError);
               } else {
