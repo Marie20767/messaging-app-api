@@ -236,8 +236,8 @@ const addNewFriend = (request, response) => {
               } else {
                 // Insert an empty message into the new thread so that when the client requests all messages they get at least one message for each thread
                 pool.query(
-                  'INSERT INTO messages (thread_id, sending_user_id, recipient_user_id, text, timestamp) VALUES ($1, $2, $3, $4, NOW())',
-                  [thread_id, user_id, friend_id, ''],
+                  'INSERT INTO messages (thread_id, sending_user_id, recipient_user_id, text, timestamp, read) VALUES ($1, $2, $3, $4, NOW(), $5)',
+                  [thread_id, user_id, friend_id, '', true],
                   (addEmptyMessageError) => {
                     if (addEmptyMessageError) {
                       handleAddNewFriendError(response, addEmptyMessageError);
@@ -258,6 +258,19 @@ const addNewFriend = (request, response) => {
   });
 };
 
+const updateReadMessages = (request, response) => {
+  const { thread_id } = request.body;
+
+  pool.query('UPDATE messages SET read = true WHERE thread_id = $1', [thread_id], (updateReadMessagesError) => {
+    if (updateReadMessagesError) {
+      console.log(updateReadMessagesError);
+      response.status(500).json({ error: 'Error updating read messages' });
+    } else {
+      response.status(204).json(thread_id);
+    }
+  });
+};
+
 module.exports = {
   getUsers,
   getFriends,
@@ -268,4 +281,5 @@ module.exports = {
   updateUser,
   deleteUser,
   addNewFriend,
+  updateReadMessages,
 };

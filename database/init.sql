@@ -60,6 +60,7 @@ CREATE TABLE messages (
   recipient_user_id INT NOT NULL,
   text TEXT,
   timestamp TIMESTAMPTZ,
+  read BOOLEAN,
 
   CONSTRAINT fk_users FOREIGN KEY(sending_user_id) REFERENCES users(id),
   CONSTRAINT fk_message_threads FOREIGN KEY(thread_id) REFERENCES message_threads(id)

@@ -24,11 +24,11 @@ const io = new Server(server, {
 
 // Socket.io queries
 const addNewMessage = (data) => {
-  const { thread_id, sending_user_id, recipient_user_id, text, timestamp } = data;
+  const { thread_id, sending_user_id, recipient_user_id, text, timestamp, read } = data;
 
   pool.query(
-    'INSERT INTO messages (thread_id, sending_user_id, recipient_user_id, text, timestamp) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-    [thread_id, sending_user_id, recipient_user_id, text, timestamp],
+    'INSERT INTO messages (thread_id, sending_user_id, recipient_user_id, text, timestamp, read) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+    [thread_id, sending_user_id, recipient_user_id, text, timestamp, read],
     (addNewMessageError, results) => {
       if (addNewMessageError) {
         console.log(addNewMessageError);
@@ -44,12 +44,10 @@ const addNewMessage = (data) => {
 // Socket.io for instant message sharing
 io.on('connection', (socket) => {
   socket.on('join_room', (data) => {
-    console.log('>>> join_room: ', `chat-${data.sending_user_id}-${data.recipient_user_id}`);
     socket.join(`chat-${data.sending_user_id}-${data.recipient_user_id}`);
   });
 
   socket.on('send_message', (data) => {
-    console.log('>>> send message to: ', `chat-${data.recipient_user_id}-${data.sending_user_id}`);
     socket.to(`chat-${data.recipient_user_id}-${data.sending_user_id}`).emit('receive_message', data);
 
     addNewMessage(data);
@@ -82,6 +80,7 @@ app.post('/users', queries.createUser);
 app.post('/login', queries.loginUser);
 app.post('/add_friend', queries.addNewFriend);
 app.put('/users/:id', queries.updateUser);
+app.put('/update_message_read', queries.updateReadMessages);
 app.delete('/users/:id', queries.deleteUser);
 
 // Get the app to listen to start listening to any https requests on the port you specify
