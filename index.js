@@ -52,6 +52,14 @@ io.on('connection', (socket) => {
 
     addNewMessage(data);
   });
+
+  socket.on('join_add_friend_room', (data) => {
+    socket.join(`add-friend-${data.current_user_id}`);
+  });
+
+  socket.on('add_friend', (data) => {
+    socket.to(`add-friend-${data.new_friend_id}`).emit('received_add_new_friend', data);
+  });
 });
 
 // App.use: for middleware
