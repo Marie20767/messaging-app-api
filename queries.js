@@ -12,13 +12,28 @@ const {
 
 // request and response parameters are part of the Express API, if you don't use any of the 2 you can type '_'
 
+const getUsersInfoWithoutPassword = (userResults) => {
+  return userResults.reduce((acc, friend) => {
+    return [
+      ...acc,
+      {
+        id: friend.id,
+        name: friend.name,
+        avatar_id: friend.avatar_id,
+      },
+    ];
+  }, []);
+};
+
 const getUsers = (_, response) => {
   pool.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
     if (error) {
       console.log(error);
       response.status(500).json({ error: 'Error getting users' });
     } else {
-      response.status(200).json(results.rows);
+      const userResults = getUsersInfoWithoutPassword(results.rows);
+
+      response.status(200).json(userResults);
     }
   });
 };
@@ -53,7 +68,9 @@ const getFriends = (request, response) => {
             console.log(getFriendsFromUsersError);
             response.status(500).json({ error: 'Error getting friends' });
           } else {
-            response.status(200).json(friendResult.rows);
+            const friendsResults = getUsersInfoWithoutPassword(friendResult.rows);
+
+            response.status(200).json(friendsResults);
           }
         });
       }
@@ -99,6 +116,14 @@ const getMessages = (request, response) => {
   });
 };
 
+const getCurrentUserInfoWithoutPassword = (currentUserResult) => {
+  return {
+    id: currentUserResult.id,
+    name: currentUserResult.name,
+    avatar_id: currentUserResult.avatar_id,
+  };
+};
+
 const getUserById = (request, response) => {
   // parseInt converts a string into a number
   const id = parseInt(request.params.id);
@@ -109,7 +134,9 @@ const getUserById = (request, response) => {
       response.status(500).json({ error: 'Error finding user' });
     } else {
       // Gives back the results of the query in an array, always use results.rows
-      response.status(200).json(results.rows[0]);
+      const currentUserResult = getCurrentUserInfoWithoutPassword(results.rows[0]);
+
+      response.status(200).json(currentUserResult);
     }
   });
 };
@@ -166,8 +193,6 @@ const createUser = (request, response) => {
   });
 };
 
-// TODO: don't send back password
-
 const loginUser = (request, response) => {
   const { name, password } = request.body;
 
@@ -176,7 +201,9 @@ const loginUser = (request, response) => {
       console.log(error);
       response.status(401).json({ error: 'Wrong user name and/or password' });
     } else if (results.rows.length !== 0) {
-      response.status(200).json(results.rows[0]);
+      const currentUserResult = getCurrentUserInfoWithoutPassword(results.rows[0]);
+
+      response.status(200).json(currentUserResult);
     } else {
       response.status(401).json({ error: 'Wrong user name and/or password' });
     }
