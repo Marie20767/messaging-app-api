@@ -147,15 +147,29 @@ const handleCreateUserError = (response, error) => {
 };
 
 const insertMessageThreadsOnRegisterUser = (response, registeredUserId) => {
-  pool.query(insertMessageThreadsId, [], (messageThreadsIdError) => {
+  pool.query(insertMessageThreadsId, [], (messageThreadsIdError, messageThreadsIdResults) => {
+    console.log('>>> messageThreadsIdResults: ', messageThreadsIdResults);
+
     if (messageThreadsIdError) {
       handleCreateUserError(response, messageThreadsIdError);
     } else {
-      pool.query(insertMessageThreadsParticipants, [registeredUserId], (messageThreadsParticipantsError) => {
+      // messageThreadsIdResults example - [ { id: 8 }, { id: 9 }, { id: 10 }, { id: 11 } ... ]
+      const arrayOfMessageThreadIds = messageThreadsIdResults.rows.map((result) => {
+        return result.id;
+      });
+
+      console.log('>>> arrayOfMessageThreadIds: ', arrayOfMessageThreadIds);
+
+      // threadQueryParams example - [47, 8, 9, 10, 11]
+      const threadQueryParams = [registeredUserId, ...arrayOfMessageThreadIds];
+
+      console.log('>>> threadQueryParams: ', threadQueryParams);
+
+      pool.query(insertMessageThreadsParticipants, threadQueryParams, (messageThreadsParticipantsError) => {
         if (messageThreadsParticipantsError) {
           handleCreateUserError(response, messageThreadsParticipantsError);
         } else {
-          pool.query(insertMessageThreadsMessages, [registeredUserId], (messageThreadsMessages) => {
+          pool.query(insertMessageThreadsMessages, threadQueryParams, (messageThreadsMessages) => {
             if (messageThreadsMessages) {
               handleCreateUserError(response, messageThreadsMessages);
             } else {
@@ -169,7 +183,6 @@ const insertMessageThreadsOnRegisterUser = (response, registeredUserId) => {
 };
 
 // TODO: see if we can use multiple requests at once or clean up all the if and else statements below
-// TODO: handle generating demo threads when there is already data in the database (so we can't re-use existing message_thread IDs)
 
 const createUser = (request, response) => {
   const { name, password, avatar_id } = request.body;

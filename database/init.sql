@@ -1,5 +1,4 @@
 DROP SEQUENCE user_id_seq CASCADE;
-DROP SEQUENCE message_threads_id_seq CASCADE;
 DROP TABLE users CASCADE;
 DROP TABLE friends CASCADE;
 DROP TABLE messages CASCADE;
@@ -8,7 +7,7 @@ DROP TABLE message_thread_participants CASCADE;
 
 CREATE SEQUENCE user_id_seq
     AS integer
-    START WITH 14
+    START WITH 11
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
@@ -30,16 +29,8 @@ CREATE TABLE friends (
                       FOREIGN KEY(user_id_2) REFERENCES users(id)
 );
 
-CREATE SEQUENCE message_threads_id_seq
-    AS integer
-    START WITH 11
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
 CREATE TABLE message_threads (
-  ID INT DEFAULT nextval('message_threads_id_seq') PRIMARY KEY
+  ID SERIAL PRIMARY KEY
 );
 
 CREATE TABLE message_thread_participants (
@@ -77,7 +68,4 @@ VALUES
   (7, 'Harry', '1234', 'fox2-id'),
   (8, 'Luna', '1234', 'deer-id'),
   (9, 'Albus', '1234', 'deer2-id'),
-  (10, 'Minerva', '1234', 'chicken-id'),
-  (11, 'Draco', '1234', 'weasel-id'),
-  (12, 'Cho', '1234', 'panda-id'),
-  (13, 'Lupin', '1234', 'dog-id');
+  (10, 'Minerva', '1234', 'chicken-id');
