@@ -129,7 +129,7 @@ const getUserById = (request, response) => {
   const id = parseInt(request.params.id);
 
   pool.query('SELECT * FROM users WHERE id = $1', [id], (error, results) => {
-    if (error) {
+    if (error || !results.rows?.length) {
       console.log(error);
       response.status(500).json({ error: 'Error finding user' });
     } else {
@@ -148,8 +148,6 @@ const handleCreateUserError = (response, error) => {
 
 const insertMessageThreadsOnRegisterUser = (response, registeredUserId) => {
   pool.query(insertMessageThreadsId, [], (messageThreadsIdError, messageThreadsIdResults) => {
-    console.log('>>> messageThreadsIdResults: ', messageThreadsIdResults);
-
     if (messageThreadsIdError) {
       handleCreateUserError(response, messageThreadsIdError);
     } else {
@@ -158,12 +156,8 @@ const insertMessageThreadsOnRegisterUser = (response, registeredUserId) => {
         return result.id;
       });
 
-      console.log('>>> arrayOfMessageThreadIds: ', arrayOfMessageThreadIds);
-
       // threadQueryParams example - [47, 8, 9, 10, 11]
       const threadQueryParams = [registeredUserId, ...arrayOfMessageThreadIds];
-
-      console.log('>>> threadQueryParams: ', threadQueryParams);
 
       pool.query(insertMessageThreadsParticipants, threadQueryParams, (messageThreadsParticipantsError) => {
         if (messageThreadsParticipantsError) {
@@ -181,8 +175,6 @@ const insertMessageThreadsOnRegisterUser = (response, registeredUserId) => {
     }
   });
 };
-
-// TODO: see if we can use multiple requests at once or clean up all the if and else statements below
 
 const createUser = (request, response) => {
   const { name, password, avatar_id } = request.body;
