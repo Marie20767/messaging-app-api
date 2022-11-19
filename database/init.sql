@@ -16,7 +16,7 @@ CREATE SEQUENCE user_id_seq
 CREATE TABLE users (
   ID INT DEFAULT nextval('user_id_seq') PRIMARY KEY,
   name VARCHAR(30),
-  password VARCHAR(30),
+  password VARCHAR(256),
   avatar_id VARCHAR(30)
 );
 
@@ -59,13 +59,13 @@ CREATE TABLE messages (
 
 INSERT INTO users (id, name, password, avatar_id)
 VALUES
-  (1, 'Hermione', '1234', 'weasel-id'),
-  (2, 'Neville', '1234', 'meerkat-id'),
-  (3, 'Ron', '1234', 'snake-id'),
-  (4, 'Ginny', '1234', 'koala-id'),
-  (5, 'Sirius', '1234', 'rabbit2-id'),
-  (6, 'Rubeus', '1234', 'seal-id'),
-  (7, 'Harry', '1234', 'fox2-id'),
-  (8, 'Luna', '1234', 'deer-id'),
-  (9, 'Albus', '1234', 'deer2-id'),
-  (10, 'Minerva', '1234', 'chicken-id');
+  (1, 'Hermione', 'messageoh1234', 'weasel-id'),
+  (2, 'Neville', 'messageoh1234', 'meerkat-id'),
+  (3, 'Ron', 'messageoh1234', 'snake-id'),
+  (4, 'Ginny', 'messageoh1234', 'koala-id'),
+  (5, 'Sirius', 'messageoh1234', 'rabbit2-id'),
+  (6, 'Rubeus', 'messageoh1234', 'seal-id'),
+  (7, 'Harry', 'messageoh1234', 'fox2-id'),
+  (8, 'Luna', 'messageoh1234', 'deer-id'),
+  (9, 'Albus', 'messageoh1234', 'deer2-id'),
+  (10, 'Minerva', 'messageoh1234', 'chicken-id');

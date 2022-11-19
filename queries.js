@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable radix */
+const bcrypt = require('bcrypt');
 const { pool } = require('./database/database');
 const demoThreads = require('./demo-threads');
 
@@ -141,6 +142,11 @@ const getUserById = (request, response) => {
   });
 };
 
+const handleUsernameAlreadyTaken = (response, error) => {
+  console.log(error);
+  response.status(400).json({ error: 'Username already taken' });
+};
+
 const handleCreateUserError = (response, error) => {
   console.log(error);
   response.status(500).json({ error: 'Error creating user' });
@@ -167,7 +173,7 @@ const insertMessageThreadsOnRegisterUser = (response, registeredUserId) => {
             if (messageThreadsMessages) {
               handleCreateUserError(response, messageThreadsMessages);
             } else {
-              response.status(201).json(registeredUserId);
+              response.status(201).json({ id: registeredUserId });
             }
           });
         }
@@ -177,38 +183,54 @@ const insertMessageThreadsOnRegisterUser = (response, registeredUserId) => {
 };
 
 const createUser = (request, response) => {
-  const { name, password, avatar_id } = request.body;
+  const { name, password: plainTextPassword, avatar_id } = request.body;
 
-  pool.query('INSERT INTO users (name, password, avatar_id) VALUES ($1, $2, $3) RETURNING *', [name, password, avatar_id], (createUserError, results) => {
-    if (createUserError) {
-      handleCreateUserError(response, createUserError);
-    } else {
-      const registeredUserId = results.rows[0].id;
+  // Check if username already exists as usernames need to be unique
+  pool.query('SELECT * FROM users WHERE name = $1', [name], async (checkUsernameError, checkUsernameResults) => {
+    if (!checkUsernameResults.rows.length) {
+      // Password encryption
+      const password = await bcrypt.hash(plainTextPassword, 10);
 
-      // When you register, add as friends all the demo users to the registered user
-      pool.query(insertDemoFriends, [registeredUserId], (insertDemoFriendsError) => {
-        if (insertDemoFriendsError) {
-          handleCreateUserError(response, insertDemoFriendsError);
+      pool.query('INSERT INTO users (name, password, avatar_id) VALUES ($1, $2, $3) RETURNING *', [name, password, avatar_id], (createUserError, results) => {
+        if (createUserError) {
+          handleCreateUserError(response, createUserError);
         } else {
-          // Once user has been created, insert some demo message threads for them
-          insertMessageThreadsOnRegisterUser(response, registeredUserId);
+          const registeredUserId = results.rows[0].id;
+
+          // When you register, add as friends all the demo users to the registered user
+          pool.query(insertDemoFriends, [registeredUserId], (insertDemoFriendsError) => {
+            if (insertDemoFriendsError) {
+              handleCreateUserError(response, insertDemoFriendsError);
+            } else {
+              // Once user has been created, insert some demo message threads for them
+              insertMessageThreadsOnRegisterUser(response, registeredUserId);
+            }
+          });
         }
       });
+    } else {
+      handleUsernameAlreadyTaken(response, checkUsernameError);
     }
   });
 };
 
 const loginUser = (request, response) => {
-  const { name, password } = request.body;
+  const { name, password: plainTextPassword } = request.body;
 
-  pool.query('SELECT * FROM users WHERE name = $1 AND password = $2', [name, password], (error, results) => {
+  pool.query('SELECT * FROM users WHERE name = $1', [name], async (error, results) => {
     if (error) {
       console.log(error);
       response.status(401).json({ error: 'Wrong user name and/or password' });
     } else if (results.rows.length !== 0) {
-      const currentUserResult = getCurrentUserInfoWithoutPassword(results.rows[0]);
+      const isCorrectPassword = await bcrypt.compare(plainTextPassword, results.rows[0].password);
 
-      response.status(200).json(currentUserResult);
+      if (isCorrectPassword) {
+        const currentUserResult = getCurrentUserInfoWithoutPassword(results.rows[0]);
+
+        response.status(200).json(currentUserResult);
+      } else {
+        response.status(401).json({ error: 'Wrong user name and/or password' });
+      }
     } else {
       response.status(401).json({ error: 'Wrong user name and/or password' });
     }
