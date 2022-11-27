@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable radix */
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { pool } = require('./database/database');
 const demoThreads = require('./demo-threads');
 

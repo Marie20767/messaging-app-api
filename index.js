@@ -10,7 +10,7 @@ const { pool } = require('./database/database');
 
 // Express is a node.js web server framework to make it easier to make API requests
 const app = express();
-const port = 3001;
+const port = 3002;
 
 // Create server with express
 const server = http.createServer(app);
@@ -80,16 +80,18 @@ app.use((_, res, next) => {
 });
 
 // REST API endpoints
-app.get('/users', queries.getUsers);
-app.get('/users/:id', queries.getUserById);
-app.get('/friends/:id', queries.getFriends);
-app.get('/messages/:id', queries.getMessages);
-app.post('/users', queries.createUser);
-app.post('/login', queries.loginUser);
-app.post('/add_friend', queries.addNewFriend);
-app.put('/users/:id', queries.updateUser);
-app.put('/update_message_read', queries.updateReadMessages);
-app.delete('/users/:id', queries.deleteUser);
+const routePath = '/messageoh';
+
+app.get(`${routePath}/users`, queries.getUsers);
+app.get(`${routePath}/users/:id`, queries.getUserById);
+app.get(`${routePath}/friends/:id`, queries.getFriends);
+app.get(`${routePath}/messages/:id`, queries.getMessages);
+app.post(`${routePath}/users`, queries.createUser);
+app.post(`${routePath}/login`, queries.loginUser);
+app.post(`${routePath}/add_friend`, queries.addNewFriend);
+app.put(`${routePath}/users/:id`, queries.updateUser);
+app.put(`${routePath}/update_message_read`, queries.updateReadMessages);
+app.delete(`${routePath}/users/:id`, queries.deleteUser);
 
 // Get the app to listen to start listening to any https requests on the port you specify
 server.listen(port, () => {
