@@ -16,11 +16,9 @@ const port = 3002;
 // Create server with express
 const server = http.createServer(app);
 
-// TODO: change this?
-
 const io = new Server(server, {
   cors: {
-    origin: ['http://localhost:3000', 'http://192.168.1.42:3000'],
+    origin: ['http://localhost:3000', 'http://192.168.1.42:3000', 'https://messaging-app.pages.dev'],
     methods: ['GET', 'POST'],
   },
 });
