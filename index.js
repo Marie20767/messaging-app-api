@@ -3,6 +3,7 @@
 // Imports
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 const queries = require('./queries');
@@ -14,6 +15,8 @@ const port = 3002;
 
 // Create server with express
 const server = http.createServer(app);
+
+// TODO: change this?
 
 const io = new Server(server, {
   cors: {
@@ -72,12 +75,7 @@ app.use(
 );
 
 // To allow data sharing between different local hosts during development phase
-app.use((_, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
+app.use(cors());
 
 // REST API endpoints
 const routePath = '/messageoh';
