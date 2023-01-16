@@ -220,7 +220,7 @@ const loginUser = (request, response) => {
   pool.query('SELECT * FROM users WHERE name = $1', [name], async (error, results) => {
     if (error) {
       console.log(error);
-      response.status(401).json({ error: 'Wrong user name and/or password' });
+      response.status(401).json({ error: 'Wrong username and/or password' });
     } else if (results.rows.length !== 0) {
       const isCorrectPassword = await bcrypt.compare(plainTextPassword, results.rows[0].password);
 
@@ -229,10 +229,10 @@ const loginUser = (request, response) => {
 
         response.status(200).json(currentUserResult);
       } else {
-        response.status(401).json({ error: 'Wrong user name and/or password' });
+        response.status(401).json({ error: 'Wrong username and/or password' });
       }
     } else {
-      response.status(401).json({ error: 'Wrong user name and/or password' });
+      response.status(401).json({ error: 'Wrong username and/or password' });
     }
   });
 };
